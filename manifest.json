@@ -1,6 +1,6 @@
 {
     "name": "handi",
-    "manifest_version": 1,
+    "manifest_version": 2,
     "version": "1.0.0",
     "permissions": ["activeTab","declarativeContent","storage"],
     "background": {
