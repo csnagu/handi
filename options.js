@@ -7,7 +7,6 @@ function applySiteList() {
                 pageUrl: { hostContains: sitePattern }
             }));
         }
-
         // add rules
         chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
             chrome.declarativeContent.onPageChanged.addRules([
@@ -34,7 +33,6 @@ function insertSiteList(targetElement) {
 };
 let siteList = document.getElementById("siteList");
 insertSiteList(siteList);
-applySiteList();
 
 function addSiteList(newSite) {
     chrome.storage.sync.get("site", function (data) {
@@ -45,4 +43,5 @@ let submitButton = document.getElementById("addSite");
 submitButton.addEventListener('click', function () {
     const newSite = document.getElementById("newSite").value;
     addSiteList(newSite);
+    applySiteList();
 });
