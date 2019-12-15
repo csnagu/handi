@@ -1,10 +1,12 @@
 function applySiteList() {
     chrome.storage.sync.get("site", function (data) {
-        // get site list
+        // get site info
         let targetSiteList = [];
-        for (let sitePattern of data.site) {
+        for (let key of Object.keys(data.site)) {
+            const siteInfo = data.site[key];
+            const hostPattern = siteInfo.hostPattern
             targetSiteList.push(new chrome.declarativeContent.PageStateMatcher({
-                pageUrl: { hostContains: sitePattern }
+                pageUrl: { hostContains: hostPattern }
             }));
         }
         // add rules
@@ -21,27 +23,48 @@ function applySiteList() {
 
 function insertSiteList(targetElement) {
     chrome.storage.sync.get("site", function (data) {
-        for (let sitePattern of data.site) {
-            targetElement.appendChild(document.createElement("li"));
-            let input_text = document.createElement("input");
-            input_text.setAttribute("type", "text");
-            input_text.setAttribute('value', sitePattern);
-            input_text.setAttribute('readonly', 1)
-            targetElement.appendChild(input_text);
+        let fragment = document.createDocumentFragment();
+        for (let key of Object.keys(data.site)) {
+            const siteInfo = data.site[key]
+            const showSiteListText = document.createTextNode(`${siteInfo.hostPattern}:\t${siteInfo.killTime}秒`);
+
+            fragment.appendChild(document.createElement("li"));
+            fragment.appendChild(showSiteListText)
         }
+        targetElement.appendChild(fragment)
     });
 };
 let siteList = document.getElementById("siteList");
 insertSiteList(siteList);
 
-function addSiteList(newSite) {
+
+function addSiteList(hostPattern, killTime) {
+    const newHost = {
+        [hostPattern]: {
+            hostPattern: hostPattern,
+            killTime: parseInt(killTime, 10)
+        }
+    }
+
     chrome.storage.sync.get("site", function (data) {
-        chrome.storage.sync.set({ site: [...data.site, newSite] });
+        chrome.storage.sync.set({ site: { ...data.site, ...newHost } });
     });
 };
-let submitButton = document.getElementById("addSite");
-submitButton.addEventListener('click', function () {
-    const newSite = document.getElementById("newSite").value;
-    addSiteList(newSite);
+
+const form = document.getElementById("add");
+form.addEventListener('submit', function () {
+    const hostPattern = document.getElementById("hostPattern").value;
+    let killTime = parseInt(document.getElementById("killTime").value, 10);
+    if (killTime < 0) { killTime = 0; }
+
+    addSiteList(hostPattern, killTime);
+    applySiteList();
+});
+
+const resetButton = document.getElementById("reset");
+resetButton.addEventListener('click', function () {
+    const siteList = document.getElementById("siteList");
+    chrome.storage.sync.set({ site: {} });
+
     applySiteList();
 });

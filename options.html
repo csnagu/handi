@@ -1,18 +1,31 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      ul {
-        list-style: none;
-      }
-    </style>
-  </head>
-  <body>
-    <ul id="siteList"></ul>
-    <form id="add">
-      <input type="text" name="newHost" id="newSite" />
-      <input type="submit" value="Add Host" id="addSite">
-    </form>
-  </body>
-  <script src="options.js"></script>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    ul {
+      list-style: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Setting Site List</h1>
+  <ul id="siteList"></ul>
+
+  <h1>Add Site List</h1>
+  <form id="add">
+    <p>hostname のパターン: <input type="text" name="hostPattern" id="hostPattern" required></p>
+    <p>1訪問あたりの閲覧時間(秒): <input type="number" name="killTime" id="killTime" required></p>
+    <input type="submit" value="Add Host" id="addSite">
+  </form>
+
+  <form id="reset">
+    <input type="submit" value="reset" id="reset">
+
+  </form>
+</body>
+<script src="options.js"></script>
+
 </html>
